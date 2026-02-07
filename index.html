@@ -1,49 +1,88 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>We Message</title>
-</head>
-<body>
-   <h1 style="display: flex; justify-content: center; margin-top: 50px;">
-  Live broadcast console
-</h1>
+  </head>
+  <body>
+    <h1 style="display: flex; justify-content: center; margin-top: 50px">
+      Live broadcast console
+    </h1>
 
-    <p style="display: flex; justify-content: center; margin-top: 50px;">Connecting.......</p>
-    <form >
-        <input type="text" placeholder="send messa....." required>
-        <button type="submit">Deploy Message</button>
+    <p
+      id="status"
+      style="display: flex; justify-content: center; margin-top: 50px"
+    >
+      Connecting.......
+    </p>
+    <form>
+      <input
+        id="message-input"
+        type="text"
+        placeholder="send messa....."
+        required
+      />
+      <button type="submit">Deploy Message</button>
     </form>
 
     <h3>Live Stream Logs:</h3>
-    <div style="
-  background: #020617;
-  border-radius: 10px;
-  overflow: hidden;
-">
-  <div style="
-    background: #020617;
-    color: #38bdf8;
-    padding: 8px 12px;
-    font-weight: bold;
-    font-family: monospace;
-    border-bottom: 1px solid #1e293b;
-  ">
-    ● Live Broadcast Console
-  </div>
+    <div style="background: #020617; border-radius: 10px; overflow: hidden">
+      <div
+        style="
+          background: #020617;
+          color: #38bdf8;
+          padding: 8px 12px;
+          font-weight: bold;
+          font-family: monospace;
+          border-bottom: 1px solid #1e293b;
+        "
+      >
+        ● Live Broadcast Console
+      </div>
 
-  <pre style="
-    margin: 0;
-    background: #0f172a;
-    color: #e5e7eb;
-    padding: 16px;
-    height: 300px;
-    overflow-y: scroll;
-    font-family: monospace;
-    font-size: 14px;
-  "></pre>
-</div>
+      <pre
+        id="log"
+        style="
+          margin: 0;
+          background: #0f172a;
+          color: #e5e7eb;
+          padding: 16px;
+          height: 300px;
+          overflow-y: scroll;
+          font-family: monospace;
+          font-size: 14px;
+        "
+      ></pre>
+    </div>
+  </body>
 
-</body>
+  <script>
+    const statusEl = document.getElementById("status");
+    const log = document.getElementById("log");
+    const input = document.getElementById("message-input");
+
+    //connect the websocket
+    const socket = new WebSocket("ws://localhost:8080");
+
+    const appendLog = (label, message) => {
+      const entry = `${new Date().toLocaleTimeString()}
+${label}\n`;
+      log.textContent = entry + log.textContent;
+    };
+
+    socket.addEventListener("open", () => {
+      statusEl.textContent = "CONNECTED : ws://localhost:8080";
+      statusEl.className = "status-on";
+      appendLog("[SYSTEM]", "Tunnel Established");
+    });
+    socket.addEventListener("close", () => {
+      statusEl.textContent = "DISCONNECTED";
+      statusEl.className = "status-off";
+      appendLog("[SYSTEM]", "Tunnel Collapsed.");
+    });
+    socket.addEventListener("message", (e) => {
+      appendLog("[RECEIVED]", e.data);
+    });
+  </script>
 </html>
