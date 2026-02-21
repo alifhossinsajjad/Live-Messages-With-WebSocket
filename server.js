@@ -1,4 +1,7 @@
 import { WebSocketServer } from "ws";
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 const wss = new WebSocketServer({ port: 8080 });
 
