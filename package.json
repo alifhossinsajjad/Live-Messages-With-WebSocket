@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev" : "node --watch server.js"
+    "dev": "node init && node --watch server.js"
   },
   "keywords": [],
   "author": "",
